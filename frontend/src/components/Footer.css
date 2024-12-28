@@ -34,7 +34,7 @@
 }
 .Footer .footer-container .contacts{
     width: 35%;
-    height: 90%;
+    height: 80%;
     display: flex;
     flex-direction: column;
     /* justify-content: space-around; */
@@ -55,4 +55,27 @@
 }
 .Footer .footer-container .contacts .socials a{
     color: rgba(255, 182, 193);
+}
+@media only screen and (max-width: 480px){
+    .Footer{
+        width: 100vw;
+        height: 100vh;
+    }
+    .Footer .footer-container{
+        flex-direction: column;
+        height: 80%;
+        align-items: center;
+        align-items: flex-start;
+    }
+    .Footer .footer-container .footer-logo{
+        height: 25%;
+        width: 80%;
+        flex-direction: row;
+    }
+    .Footer .footer-container .quick-links{
+        height: 35%;
+    }
+    .Footer .footer-container .contacts{
+        height: 45%;
+    }
 }
