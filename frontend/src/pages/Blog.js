@@ -1,12 +1,15 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
+import HeroBlog from '../components/HeroBlog'
 
 function Blog() {
   return (
     <div className='Blog'>
         <div className='blog-container'>
             <Navbar/>
-            <h1>Blog</h1>
+            <HeroBlog/>
+            <Footer/>
         </div>
     </div>
   )
