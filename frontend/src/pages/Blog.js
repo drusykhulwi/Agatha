@@ -6,7 +6,6 @@ const Blog = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="container mx-auto px-4">
-        <h1 className="text-2xl text-gray-400 font-light py-6">Blogs</h1>
         <Navigation />
       </header>
       
