@@ -1,5 +1,4 @@
 import React from 'react';
-// import { Play } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
@@ -62,7 +61,7 @@ const PodcastsPage = () => {
                 />
               </div>
               <div>
-                <Link to={`/podcast/${podcast.id}`} className="font-semibold hover:text-pink-500">
+                <Link to={`/podcast-audio/${podcast.id}`} className="font-semibold hover:text-pink-500">
                   {podcast.title}
                 </Link>
                 <p className="text-sm text-gray-600">{podcast.podcaster}</p>
@@ -102,7 +101,7 @@ const PodcastsPage = () => {
                 />
               </div>
               <div className="flex-1">
-                <Link to={`/podcast/${podcast.id}`} className="font-semibold hover:text-pink-500">
+                <Link to={`/podcast-video/${podcast.id}`} className="font-semibold hover:text-pink-500">
                   {podcast.title}
                 </Link>
                 <p className="text-sm text-gray-600">{podcast.podcaster}</p>

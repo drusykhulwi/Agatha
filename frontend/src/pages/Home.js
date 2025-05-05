@@ -1,7 +1,7 @@
 import React from 'react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
-import pink from '../images/pink.jpg'
+import pink from '../Images/Pink.jpg'
 
 const Home = () => {
   return (

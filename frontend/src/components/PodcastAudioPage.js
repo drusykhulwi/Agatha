@@ -17,7 +17,7 @@ const PodcastAudioPage = () => {
         id: id,
         title: 'PODCAST TITLE',
         podcasterName: 'PODCASTER\'S NAME',
-        image: '/path/to/podcast-image.jpg',
+        image: 'https://images.pexels.com/photos/205926/pexels-photo-205926.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
         audioSrc: '/path/to/audio-file.mp3'
       });
     };
