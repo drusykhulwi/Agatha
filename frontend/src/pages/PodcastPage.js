@@ -1,7 +1,8 @@
 import React from 'react';
-import { Play } from 'lucide-react';
+// import { Play } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Navigation from '../components/Navigation';
+import Footer from '../components/Footer';
 
 // Podcast listing page component
 const PodcastsPage = () => {
@@ -120,49 +121,7 @@ const PodcastsPage = () => {
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="mt-12 py-6 border-t border-gray-200">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <div className="w-16 h-16 bg-pink-200 flex items-center justify-center rounded-md mb-4">
-              <span className="text-2xl font-serif">AN</span>
-            </div>
-            <p className="text-sm text-gray-500">"Your bio"</p>
-          </div>
-          
-          <div>
-            <h3 className="text-pink-200 mb-4">QUICK LINKS</h3>
-            <ul className="space-y-2">
-              <li><a href="#" className="hover:text-pink-500">Home</a></li>
-              <li><a href="#" className="hover:text-pink-500">Blogs</a></li>
-              <li><a href="#" className="hover:text-pink-500">Podcasts</a></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h3 className="text-pink-200 mb-4">Contacts</h3>
-            <ul className="space-y-2">
-              <li>email@gmail.com</li>
-              <li>+254712345678</li>
-              <li className="flex space-x-3">
-                <a href="#" className="text-blue-600 hover:text-blue-800">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M22 3.47v17.06A1.47 1.47 0 0120.53 22H3.47A1.47 1.47 0 012 20.53V3.47A1.47 1.47 0 013.47 2h17.06A1.47 1.47 0 0122 3.47zM7.882 19.262h-2.64v-8.47h2.64v8.47zM6.562 9.754a1.524 1.524 0 110-3.048 1.524 1.524 0 010 3.048zM19.259 19.262h-2.632v-4.12c0-.984-.018-2.249-1.369-2.249-1.371 0-1.581 1.07-1.581 2.176v4.193h-2.632v-8.47h2.525v1.155h.036a2.77 2.77 0 012.495-1.37c2.67 0 3.161 1.759 3.161 4.04v4.645z" />
-                  </svg>
-                </a>
-                <a href="#" className="text-blue-400 hover:text-blue-600">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z" />
-                  </svg>
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className="mt-8 text-center text-sm text-gray-500">
-          COPYRIGHT © 2024, Agatha Nafula
-        </div>
-      </div>
+      <Footer/>
     </div>
   );
 };
