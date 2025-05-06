@@ -37,7 +37,7 @@ const PodcastsPage = () => {
             <img 
               src="https://images.pexels.com/photos/7586662/pexels-photo-7586662.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
               alt="Podcast mic and equipment" 
-              className="w-full rounded-md" 
+              className="w-full h-full rounded-full" 
             />
           </div>
         </div>

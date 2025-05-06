@@ -8,6 +8,8 @@ import PodcastVideoPage from './components/PodcastVideoPage';
 import Dashboard from './admin/Dashboard';
 import ArticleList from './admin/ArticleList';
 import AddEditArticle from './admin/AddEditArticle';
+import PodcastList from './admin/PodcatList';
+import AddPodcast from './admin/AddPodcast';
 
 function App() {
   return (
@@ -22,6 +24,9 @@ function App() {
         <Route path="/articles" element={<ArticleList />} />
         <Route path="/add-article" element={<AddEditArticle />} />
         <Route path="/edit-article/:id" element={<AddEditArticle />} />
+        <Route path="/podcastlist" element={<PodcastList />} />
+        <Route path="/add-podcast" element={<AddPodcast />} />
+        <Route path="/edit-podcast/:id" element={<AddPodcast />} />
       </Routes>
     </Router>
   );

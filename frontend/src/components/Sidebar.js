@@ -11,7 +11,7 @@ import Logo from './Logo';
     const navItems = [
       { name: 'DASHBOARD', link: '/dashboard', icon: <LayoutDashboard size={20} />, active: true },
       { name: 'ARTICLES', link: '/articles', icon: <FileText size={20} /> },
-      { name: 'PODCASTS', icon: <Headphones size={20} /> },
+      { name: 'PODCASTS', link: '/podcastlist', icon: <Headphones size={20} /> },
     ];
   
     return (
