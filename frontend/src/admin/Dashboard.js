@@ -24,10 +24,10 @@ const Dashboard = () => {
       {/* Sidebar */}
       <Sidebar isMobileMenuOpen={isMobileMenuOpen} closeMobileMenu={() => setIsMobileMenuOpen(false)} />
 
-      {/* Main content - with proper margin for sidebar */}
+      {/* Main content */}
       <div className="flex-1 overflow-auto p-8 lg:ml-30">
         <div className="max-w-7xl mx-auto">
-            <h1 className="text-2xl font-bold mb-6 mt-6">Dashboard</h1>
+            <h1 className="text-2xl font-bold mb-6 mt-6 text-primary">Dashboard</h1>
             <p className="text-gray-600 mb-4">Welcome to your dashboard! Here you can manage your podcasts and articles.</p>
           {/* Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

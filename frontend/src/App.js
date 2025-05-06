@@ -6,6 +6,8 @@ import Podcasts from './pages/PodcastPage';
 import PodcastAudioPage from './components/PodcastAudioPage';
 import PodcastVideoPage from './components/PodcastVideoPage';
 import Dashboard from './admin/Dashboard';
+import ArticleList from './admin/ArticleList';
+import AddEditArticle from './admin/AddEditArticle';
 
 function App() {
   return (
@@ -17,6 +19,9 @@ function App() {
         <Route path="/podcast-audio/:id" element={<PodcastAudioPage />} />
         <Route path="/podcast-video/:id" element={<PodcastVideoPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/articles" element={<ArticleList />} />
+        <Route path="/add-article" element={<AddEditArticle />} />
+        <Route path="/edit-article/:id" element={<AddEditArticle />} />
       </Routes>
     </Router>
   );

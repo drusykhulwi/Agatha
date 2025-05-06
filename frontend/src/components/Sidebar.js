@@ -11,10 +11,9 @@ import Logo from './Logo';
   
   const Sidebar = ({ isMobileMenuOpen, closeMobileMenu }) => {
     const navItems = [
-      { name: 'DASHBOARD', icon: <LayoutDashboard size={20} />, active: true },
-      { name: 'ARTICLES', icon: <FileText size={20} /> },
+      { name: 'DASHBOARD', link: '/dashboard', icon: <LayoutDashboard size={20} />, active: true },
+      { name: 'ARTICLES', link: '/articles', icon: <FileText size={20} /> },
       { name: 'PODCASTS', icon: <Headphones size={20} /> },
-      { name: 'SETTINGS', icon: <Settings size={20} /> },
     ];
   
     return (
@@ -58,7 +57,7 @@ import Logo from './Logo';
               {navItems.map((item) => (
                 <li key={item.name}>
                   <a
-                    href="#"
+                    href={item.link || './dashboard'}
                     className={`flex items-center px-6 py-4 hover:bg-econdary-dark transition-colors ${
                       item.active ? 'border-l-4 border-secondary' : ''
                     }`}
@@ -70,16 +69,7 @@ import Logo from './Logo';
               ))}
             </ul>
           </nav>
-  
-          {/* Logged in as */}
-          <div className="absolute bottom-20 w-full px-6">
-            <div className="flex items-center">
-              <div className="flex items-center">
-                <span className="text-sm">LOGGED IN AS</span>
-                <Code size={16} className="ml-2 text-secondary" />
-              </div>
-            </div>
-          </div>
+          
   
           {/* Logout */}
           <div className="absolute bottom-6 w-full px-6">
