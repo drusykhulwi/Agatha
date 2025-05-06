@@ -19,8 +19,10 @@ const PodcastsPage = () => {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto p-4">
-       <Navigation/>
+    <div className="min-h-screen flex flex-col">
+        <header className="container mx-auto px-4">
+            <Navigation />
+        </header>
       {/* Section 1 */}
       <div className="bg-white rounded-md shadow-sm p-8 mb-8">
         <div className="flex flex-col md:flex-row justify-between items-center">
@@ -42,7 +44,7 @@ const PodcastsPage = () => {
       </div>
 
       {/* Audio Section */}
-      <div className="mb-8">
+      <div className="mb-8 p-8">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">AUDIO</h2>
           <button className="bg-pink-200 hover:bg-pink-300 text-gray-800 px-4 py-1 rounded-md">
@@ -82,7 +84,7 @@ const PodcastsPage = () => {
       </div>
 
       {/* Video Section */}
-      <div className="mb-8">
+      <div className="mb-8 p-8">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">VIDEO</h2>
           <button className="bg-pink-200 hover:bg-pink-300 text-gray-800 px-4 py-1 rounded-md">

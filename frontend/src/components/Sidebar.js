@@ -2,9 +2,7 @@ import {
     LayoutDashboard, 
     FileText, 
     Headphones, 
-    Settings, 
     LogOut, 
-    Code, 
     X 
   } from 'lucide-react';
 import Logo from './Logo';

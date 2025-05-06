@@ -31,7 +31,8 @@ const Navigation = () => {
           </Link>
           <Link 
             to="/podcasts" 
-            className="px-4 py-1 text-gray-700"
+            className={`px-4 py-1 ${location.pathname === '/podcasts' ? 'bg-primary text-white' : 'text-gray-700'}`}
+
           >
             PODCASTS
           </Link>
@@ -77,7 +78,7 @@ const Navigation = () => {
           </Link>
           <Link 
             to="/podcasts" 
-            className="px-4 py-2 text-gray-700 rounded"
+            className={`px-4 py-2 ${location.pathname === '/podcasts' ? 'bg-primary text-white' : 'text-gray-700'} rounded mb-1`}
             onClick={() => setMobileMenuOpen(false)}
           >
             PODCASTS
