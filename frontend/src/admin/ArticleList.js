@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
-import { Menu } from 'lucide-react';
+import { Menu,  Trash2, Edit } from 'lucide-react';
 
 function ArticleList() {
  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -13,19 +13,22 @@ function ArticleList() {
   const [articles, setArticles] = useState([
     { 
       id: 1, 
-      title: 'Getting Started with React', 
+      title: 'Getting Started with React',
+      thumbnailUrl: "https://images.pexels.com/photos/6768277/pexels-photo-6768277.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", 
       datePosted: '2025-05-01', 
       views: 1250 
     },
     { 
       id: 2, 
       title: 'Tailwind CSS Tips and Tricks', 
+      thumbnailUrl: "https://images.pexels.com/photos/6768277/pexels-photo-6768277.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
       datePosted: '2025-04-28', 
       views: 986 
     },
     { 
       id: 3, 
-      title: 'Building Responsive Layouts', 
+      title: 'Building Responsive Layouts',
+      thumbnailUrl: "https://images.pexels.com/photos/6768277/pexels-photo-6768277.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", 
       datePosted: '2025-04-15', 
       views: 2430 
     },
@@ -67,6 +70,9 @@ function ArticleList() {
             <thead className="bg-gray-50">
                 <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Thumbnail
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Title
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -84,6 +90,13 @@ function ArticleList() {
                 {articles.map((article) => (
                 <tr key={article.id}>
                     <td className="px-6 py-4 whitespace-nowrap">
+                        <img 
+                        src={article.thumbnailUrl} 
+                        alt={article.title} 
+                        className="h-12 w-12 rounded-md object-cover"
+                        />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">{article.title}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -96,15 +109,15 @@ function ArticleList() {
                     <div className="flex space-x-2">
                         <Link 
                         to={`/edit-article/${article.id}`} 
-                        className="text-primary hover:text-red-700 transition-colors duration-300"
+                        className="text-primary hover:text-secondary transition-colors duration-300"
                         >
-                        Edit
+                        <Edit size={18} />
                         </Link>
                         <button
                         onClick={() => handleDelete(article.id)}
-                        className="text-gray-500 hover:text-gray-700 transition-colors duration-300"
+                        className="text-secondary hover:text-background transition-colors duration-300"
                         >
-                        Delete
+                        <Trash2 size={18} />
                         </button>
                     </div>
                     </td>

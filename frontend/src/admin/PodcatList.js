@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trash2, Edit, Plus } from 'lucide-react';
+import { Trash2, Edit, Plus, Menu } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
-import { Menu } from 'lucide-react';
+
 
 // Sample data for demonstration
 
@@ -11,7 +11,7 @@ const samplePodcasts = [
     id: 1,
     title: "Understanding React Hooks",
     type: "audio",
-    thumbnailUrl: "/api/placeholder/100/100",
+    thumbnailUrl: "https://images.pexels.com/photos/6768277/pexels-photo-6768277.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
     datePosted: "2025-05-01",
     views: 1245,
     duration: "32:15",
@@ -21,7 +21,7 @@ const samplePodcasts = [
     id: 2,
     title: "Deep Dive into Tailwind CSS",
     type: "video",
-    thumbnailUrl: "/api/placeholder/100/100",
+    thumbnailUrl: "https://images.pexels.com/photos/6768277/pexels-photo-6768277.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
     datePosted: "2025-04-28",
     views: 3678,
     duration: "45:30",
@@ -31,7 +31,7 @@ const samplePodcasts = [
     id: 3,
     title: "State Management in 2025",
     type: "audio",
-    thumbnailUrl: "/api/placeholder/100/100",
+    thumbnailUrl: "https://images.pexels.com/photos/6768277/pexels-photo-6768277.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
     datePosted: "2025-04-22",
     views: 987,
     duration: "28:45",

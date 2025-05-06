@@ -44,7 +44,7 @@ const Dashboard = () => {
               <p className="text-3xl font-bold text-primary">1,245</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow">
-              <h3 className="text-sm font-medium text-gray-500">Total Users</h3>
+              <h3 className="text-sm font-medium text-gray-500">Total Likes</h3>
               <p className="text-3xl font-bold text-primary">42</p>
             </div>
           </div>
@@ -56,6 +56,7 @@ const Dashboard = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thumbnail</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Views</th>
@@ -65,6 +66,13 @@ const Dashboard = () => {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {[1, 2, 3].map((podcast) => (
                     <tr key={podcast}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <img 
+                          src='https://images.pexels.com/photos/6768277/pexels-photo-6768277.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' 
+                          alt='podcast title' 
+                          className="h-12 w-12 rounded-md object-cover"
+                        />
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap">Podcast Episode {podcast}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{new Date().toLocaleDateString()}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{Math.floor(Math.random() * 100)}</td>
@@ -86,6 +94,9 @@ const Dashboard = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Thumbnail
+                    </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Views</th>
@@ -95,6 +106,13 @@ const Dashboard = () => {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {[1, 2, 3].map((article) => (
                     <tr key={article}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <img 
+                          src='https://images.pexels.com/photos/6768277/pexels-photo-6768277.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' 
+                          alt='article title' 
+                          className="h-12 w-12 rounded-md object-cover"
+                        />
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap">Article {article}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{new Date().toLocaleDateString()}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{Math.floor(Math.random() * 100)}</td>
