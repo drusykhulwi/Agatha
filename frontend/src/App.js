@@ -8,7 +8,7 @@ import PodcastVideoPage from './components/PodcastVideoPage';
 import Dashboard from './admin/Dashboard';
 import ArticleList from './admin/ArticleList';
 import AddEditArticle from './admin/AddEditArticle';
-import PodcastList from './admin/PodcatList';
+import PodcastList from './admin/PodcastList';
 import AddPodcast from './admin/AddPodcast';
 
 function App() {
