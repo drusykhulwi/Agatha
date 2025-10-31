@@ -1,84 +1,114 @@
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
-    LayoutDashboard, 
-    FileText, 
-    Headphones, 
-    LogOut, 
-    X 
-  } from 'lucide-react';
+  LayoutDashboard, 
+  FileText, 
+  Headphones, 
+  LogOut, 
+  X 
+} from 'lucide-react';
 import Logo from './Logo';
-  
-  const Sidebar = ({ isMobileMenuOpen, closeMobileMenu }) => {
-    const navItems = [
-      { name: 'DASHBOARD', link: '/dashboard', icon: <LayoutDashboard size={20} />, active: true },
-      { name: 'ARTICLES', link: '/articles', icon: <FileText size={20} /> },
-      { name: 'PODCASTS', link: '/podcastlist', icon: <Headphones size={20} /> },
-    ];
-  
-    return (
-      <>
-        {/* Overlay for mobile menu */}
-        {isMobileMenuOpen && (
-          <div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-10 lg:hidden"
-            onClick={closeMobileMenu}
-          />
-        )}
-  
-        {/* Sidebar */}
-        <div 
-          className={`w-64 bg-secondary text-white fixed inset-y-0 left-0 z-20 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 ${
-            isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-          }`}
-        >
-          {/* Close button for mobile */}
-          <div className="lg:hidden absolute right-4 top-4">
-            <button 
-              onClick={closeMobileMenu}
-              className="text-white hover:text-gray-200"
-            >
-              <X size={24} />
-            </button>
-          </div>
-  
-          {/* Logo */}
-          <div className="flex items-center justify-center h-20 border-b border-secondary-dark">
-            <div className="text-3xl font-bold tracking-wider">
-              <div className="flex items-center">
-                <Logo/>
-              </div>
-            </div>
-          </div>
-  
-          {/* Navigation */}
-          <nav className="mt-8">
-            <ul>
-              {navItems.map((item) => (
-                <li key={item.name}>
-                  <a
-                    href={item.link || './dashboard'}
-                    className={`flex items-center px-6 py-4 hover:bg-econdary-dark transition-colors ${
-                      item.active ? 'border-l-4 border-secondary' : ''
-                    }`}
-                  >
-                    <span className="mr-4">{item.icon}</span>
-                    <span className="font-medium">{item.name}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-          
-  
-          {/* Logout */}
-          <div className="absolute bottom-6 w-full px-6">
-            <button className="flex items-center justify-center w-full px-4 py-2 bg-primary  rounded-3xl hover:bg-opacity-75 transition-colors">
-              <LogOut size={18} className="mr-2" />
-              <span>LOGOUT</span>
-            </button>
-          </div>
-        </div>
-      </>
-    );
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebase/Config';
+
+const Sidebar = ({ isMobileMenuOpen, closeMobileMenu }) => {
+  const navigate = useNavigate();
+
+  const navItems = [
+    { name: 'DASHBOARD', link: '/dashboard', icon: <LayoutDashboard size={20} />, active: true },
+    { name: 'ARTICLES', link: '/articles', icon: <FileText size={20} /> },
+    { name: 'PODCASTS', link: '/podcastlist', icon: <Headphones size={20} /> },
+  ];
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate('/login');
+      if (isMobileMenuOpen) {
+        closeMobileMenu();
+      }
+    } catch (err) {
+      console.error('Logout error:', err);
+      alert('Failed to logout. Please try again.');
+    }
   };
-  
-  export default Sidebar;
+
+  return (
+    <>
+      {/* Overlay for mobile menu */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+          onClick={closeMobileMenu}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside className={`
+        fixed lg:static inset-y-0 left-0 z-40
+        w-64 bg-white shadow-lg
+        transform transition-transform duration-300 ease-in-out
+        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+        lg:translate-x-0
+      `}>
+        {/* Close button for mobile */}
+        <div className="lg:hidden absolute top-4 right-4">
+          <button
+            onClick={closeMobileMenu}
+            className="p-2 rounded-md hover:bg-gray-100"
+          >
+            <X size={24} />
+          </button>
+        </div>
+
+        {/* Logo */}
+        <div className="p-6 border-b border-gray-200">
+          <Link to="/dashboard" onClick={closeMobileMenu}>
+            <div className="flex items-center justify-center">
+              <Logo />
+            </div>
+          </Link>
+        </div>
+
+        {/* Navigation */}
+        <nav className="p-4">
+          <ul className="space-y-2">
+            {navItems.map((item) => (
+              <li key={item.name}>
+                <Link
+                  to={item.link}
+                  onClick={closeMobileMenu}
+                  className={`
+                    flex items-center space-x-3 px-4 py-3 rounded-lg
+                    transition-colors duration-200
+                    ${item.active 
+                      ? 'bg-primary text-white' 
+                      : 'text-gray-700 hover:bg-gray-100'
+                    }
+                  `}
+                >
+                  {item.icon}
+                  <span className="font-medium">{item.name}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        {/* Logout */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
+          <button
+            onClick={handleLogout}
+            className="flex items-center space-x-3 px-4 py-3 rounded-lg w-full
+              text-red-600 hover:bg-red-50 transition-colors duration-200"
+          >
+            <LogOut size={20} />
+            <span className="font-medium">LOGOUT</span>
+          </button>
+        </div>
+      </aside>
+    </>
+  );
+};
+
+export default Sidebar;

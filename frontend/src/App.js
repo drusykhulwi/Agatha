@@ -10,6 +10,8 @@ import ArticleList from './admin/ArticleList';
 import AddEditArticle from './admin/AddEditArticle';
 import PodcastList from './admin/PodcastList';
 import AddPodcast from './admin/AddPodcast';
+import Login from './pages/Login';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -20,13 +22,43 @@ function App() {
         <Route path="/podcasts" element={<Podcasts />} />
         <Route path="/podcast-audio/:id" element={<PodcastAudioPage />} />
         <Route path="/podcast-video/:id" element={<PodcastVideoPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/articles" element={<ArticleList />} />
-        <Route path="/add-article" element={<AddEditArticle />} />
-        <Route path="/edit-article/:id" element={<AddEditArticle />} />
-        <Route path="/podcastlist" element={<PodcastList />} />
-        <Route path="/add-podcast" element={<AddPodcast />} />
-        <Route path="/edit-podcast/:id" element={<AddPodcast />} />
+        <Route path="/login" element={<Login />} />
+
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/articles" element={
+          <ProtectedRoute>
+            <ArticleList />
+          </ProtectedRoute>
+        } />
+        <Route path="/add-article" element={
+          <ProtectedRoute>
+            <AddEditArticle />
+          </ProtectedRoute>
+        } />
+        <Route path="/edit-article/:id" element={
+          <ProtectedRoute>
+            <AddEditArticle />
+          </ProtectedRoute>
+        } />
+        <Route path="/podcastlist" element={
+          <ProtectedRoute>
+            <PodcastList />
+          </ProtectedRoute>
+        } />
+        <Route path="/add-podcast" element={
+          <ProtectedRoute>
+            <AddPodcast />
+          </ProtectedRoute>
+        } />
+        <Route path="/edit-podcast/:id" element={
+          <ProtectedRoute>
+            <AddPodcast />
+          </ProtectedRoute>
+        } />
       </Routes>
     </Router>
   );
