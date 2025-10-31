@@ -1,104 +1,176 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import Navigation from './Navigation';
+import { doc, getDoc, updateDoc, increment } from 'firebase/firestore';
+import { db } from '../firebase/Config';
+import Navigation from '../components/Navigation';
+import Footer from '../components/Footer';
 
 const PodcastVideoPage = () => {
   const { id } = useParams();
   const [podcast, setPodcast] = useState(null);
-  const [currentTime, setCurrentTime] = useState('7:23');
-  const [totalDuration, setTotalDuration] = useState('9:53');
+  const [loading, setLoading] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
-  
-  // Simulating fetching podcast data based on ID
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const videoRef = useRef(null);
+
   useEffect(() => {
-    // This would typically be an API call
-    const fetchPodcastData = () => {
-      // Mock data - in real app, you'd fetch based on the id
-      setPodcast({
-        id: id,
-        title: 'PODCAST TITLE',
-        podcasterName: 'PODCASTERS NAME',
-        videoSrc: 'https://videos.pexels.com/video-files/6948549/6948549-uhd_2560_1440_24fps.mp4',
-        thumbnailSrc: 'https://images.pexels.com/photos/6883807/pexels-photo-6883807.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
-      });
-    };
-    
-    fetchPodcastData();
+    fetchPodcast();
   }, [id]);
-  
-  const togglePlayPause = () => {
-    setIsPlaying(!isPlaying);
-    // This would actually control the video playback in a real implementation
-  };
-  
-  const handlePrevious = () => {
-    // Logic to play previous video
-    console.log('Play previous video');
-  };
-  
-  const handleNext = () => {
-    // Logic to play next video
-    console.log('Play next video');
-  };
-  
-  if (!podcast) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
-  }
-  
-  return (
-    <div className="bg-white min-h-screen">
-      {/* Header Section */}
-      <Navigation/>
+
+  const fetchPodcast = async () => {
+    try {
+      setLoading(true);
+      const docRef = doc(db, 'podcasts', id);
+      const docSnap = await getDoc(docRef);
       
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-4">
+      if (docSnap.exists()) {
+        setPodcast({ id: docSnap.id, ...docSnap.data() });
+        
+        // Increment view count
+        await updateDoc(docRef, {
+          views: increment(1)
+        });
+      } else {
+        alert('Podcast not found!');
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching podcast:', error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const updateTime = () => setCurrentTime(video.currentTime);
+    const updateDuration = () => setDuration(video.duration);
+    const handleEnded = () => setIsPlaying(false);
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+
+    video.addEventListener('timeupdate', updateTime);
+    video.addEventListener('loadedmetadata', updateDuration);
+    video.addEventListener('ended', handleEnded);
+    video.addEventListener('play', handlePlay);
+    video.addEventListener('pause', handlePause);
+
+    return () => {
+      video.removeEventListener('timeupdate', updateTime);
+      video.removeEventListener('loadedmetadata', updateDuration);
+      video.removeEventListener('ended', handleEnded);
+      video.removeEventListener('play', handlePlay);
+      video.removeEventListener('pause', handlePause);
+    };
+  }, [podcast]);
+
+  const togglePlayPause = () => {
+    const video = videoRef.current;
+    if (video) {
+      if (isPlaying) {
+        video.pause();
+      } else {
+        video.play();
+      }
+    }
+  };
+
+  const handleSeek = (e) => {
+    const video = videoRef.current;
+    if (video) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const pos = (e.clientX - rect.left) / rect.width;
+      video.currentTime = pos * duration;
+    }
+  };
+
+  const formatTime = (time) => {
+    if (isNaN(time)) return '0:00';
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-white">
+        <header className="container mx-auto px-4">
+          <Navigation />
+        </header>
+        <main className="flex-grow flex justify-center items-center">
+          <p className="text-gray-600">Loading podcast...</p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!podcast) {
+    return (
+      <div className="min-h-screen flex flex-col bg-white">
+        <header className="container mx-auto px-4">
+          <Navigation />
+        </header>
+        <main className="flex-grow flex justify-center items-center">
+          <p className="text-red-600">Podcast not found</p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white min-h-screen flex flex-col">
+      <header className="container mx-auto px-4">
+        <Navigation />
+      </header>
+      
+      <main className="flex-grow container mx-auto px-4 py-4">
         <div className="mb-6 text-center">
           <p className="text-gray-600">NOW PLAYING</p>
         </div>
         
         {/* Video Player */}
-        <div className="relative mb-4">
-          <div className="aspect-w-16 aspect-h-9 relative">
-            <img 
-              src={podcast.thumbnailSrc || "https://images.pexels.com/photos/6883809/pexels-photo-6883809.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"} 
-              alt={podcast.title}
-              className="w-full h-auto object-cover"
+        <div className="relative mb-4 max-w-4xl mx-auto">
+          <div className="relative bg-black">
+            <video 
+              ref={videoRef}
+              src={podcast.fileUrl}
+              poster={podcast.thumbnailUrl}
+              className="w-full"
+              onClick={togglePlayPause}
             />
             
-            {/* Video Overlay Elements */}
-            <div className="absolute inset-0 flex flex-col justify-between p-4 text-white">
+            {/* Video Overlay Controls */}
+            <div className="absolute inset-0 flex flex-col justify-between p-4 text-white pointer-events-none">
               {/* Top Overlay */}
               <div className="flex justify-between">
-                <h2 className="font-bold text-lg drop-shadow-md">PODCAST TITLE</h2>
-                <p className="font-bold text-lg drop-shadow-md">PODCASTERS NAME</p>
+                <h2 className="font-bold text-lg drop-shadow-md">{podcast.title}</h2>
+                <p className="font-bold text-lg drop-shadow-md">{podcast.podcaster}</p>
               </div>
               
               {/* Bottom Overlay with Controls */}
-              <div>
+              <div className="pointer-events-auto">
                 {/* Progress Bar */}
-                <div className="relative h-1 bg-gray-400 bg-opacity-50 rounded-full mb-2">
+                <div 
+                  className="relative h-1 bg-gray-400 bg-opacity-50 rounded-full mb-2 cursor-pointer"
+                  onClick={handleSeek}
+                >
                   <div 
-                    className="absolute h-full bg-white rounded-full"
-                    style={{ width: '75%' }}
+                    className="absolute h-full bg-white rounded-full transition-all"
+                    style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
                   ></div>
                 </div>
                 
                 {/* Time and Controls */}
                 <div className="flex justify-between items-center">
-                  <span className="text-sm drop-shadow-md">{currentTime}</span>
+                  <span className="text-sm drop-shadow-md">{formatTime(currentTime)}</span>
                   
                   <div className="flex space-x-4 items-center">
                     <button 
-                      className="focus:outline-none"
-                      onClick={handlePrevious}
-                    >
-                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z" />
-                      </svg>
-                    </button>
-                    
-                    <button 
-                      className="w-10 h-10 bg-gray-200 bg-opacity-30 rounded-full flex items-center justify-center focus:outline-none"
+                      className="w-10 h-10 bg-gray-200 bg-opacity-30 rounded-full flex items-center justify-center focus:outline-none hover:bg-opacity-50 transition-all"
                       onClick={togglePlayPause}
                     >
                       {isPlaying ? (
@@ -111,24 +183,27 @@ const PodcastVideoPage = () => {
                         </svg>
                       )}
                     </button>
-                    
-                    <button 
-                      className="focus:outline-none"
-                      onClick={handleNext}
-                    >
-                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798L4.555 5.168z" />
-                      </svg>
-                    </button>
                   </div>
                   
-                  <span className="text-sm drop-shadow-md">{totalDuration}</span>
+                  <span className="text-sm drop-shadow-md">{formatTime(duration)}</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
+
+        {/* Podcast Info */}
+        <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
+          <h1 className="text-2xl font-bold mb-2">{podcast.title}</h1>
+          <p className="text-gray-600 mb-4">By {podcast.podcaster}</p>
+          <div className="flex items-center text-sm text-gray-500">
+            <span className="mr-4">Duration: {podcast.duration}</span>
+            <span>Views: {(podcast.views || 0).toLocaleString()}</span>
+          </div>
+        </div>
       </main>
+      
+      <Footer />
     </div>
   );
 };
