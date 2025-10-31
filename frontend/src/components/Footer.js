@@ -23,8 +23,8 @@ const Footer = () => {
           
           <div className="flex flex-col items-center md:items-start">
             <h3 className="text-gray-400 font-light mb-4">Contacts</h3>
-            <p className="text-gray-700 mb-2">email@gmail.com</p>
-            <p className="text-gray-700 mb-4">+254712345678</p>
+            <a href='mailto:anafula721@gmail.com' className="text-gray-700 mb-2">anafula721@gmail.com</a>
+            <a href="tel:+254712345678" className="text-gray-700 mb-4">+254712345678</a>
             <div className="flex space-x-2">
               <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-blue-500">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
