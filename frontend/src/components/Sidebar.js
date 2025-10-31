@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   FileText, 
@@ -13,9 +13,10 @@ import { auth } from '../firebase/Config';
 
 const Sidebar = ({ isMobileMenuOpen, closeMobileMenu }) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const navItems = [
-    { name: 'DASHBOARD', link: '/dashboard', icon: <LayoutDashboard size={20} />, active: true },
+    { name: 'DASHBOARD', link: '/dashboard', icon: <LayoutDashboard size={20} /> },
     { name: 'ARTICLES', link: '/articles', icon: <FileText size={20} /> },
     { name: 'PODCASTS', link: '/podcastlist', icon: <Headphones size={20} /> },
   ];
@@ -31,6 +32,13 @@ const Sidebar = ({ isMobileMenuOpen, closeMobileMenu }) => {
       console.error('Logout error:', err);
       alert('Failed to logout. Please try again.');
     }
+  };
+
+  // Check if the current path matches the item link
+  const isActive = (link) => {
+    return location.pathname === link || 
+           (link === '/articles' && (location.pathname.includes('/add-article') || location.pathname.includes('/edit-article'))) ||
+           (link === '/podcastlist' && (location.pathname.includes('/add-podcast') || location.pathname.includes('/edit-podcast')));
   };
 
   return (
@@ -81,7 +89,7 @@ const Sidebar = ({ isMobileMenuOpen, closeMobileMenu }) => {
                   className={`
                     flex items-center space-x-3 px-4 py-3 rounded-lg
                     transition-colors duration-200
-                    ${item.active 
+                    ${isActive(item.link)
                       ? 'bg-primary text-white' 
                       : 'text-gray-700 hover:bg-gray-100'
                     }
