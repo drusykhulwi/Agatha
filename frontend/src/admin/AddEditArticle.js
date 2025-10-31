@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { doc, getDoc, addDoc, updateDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase/Config';
 import Sidebar from '../components/Sidebar';
 import { Menu } from 'lucide-react';
 
 function AddEditArticle() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditMode = Boolean(id);
@@ -19,35 +17,45 @@ function AddEditArticle() {
     description: '',
     link: ''
   });
+  
+  const [loading, setLoading] = useState(false);
+  const [fetchingData, setFetchingData] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
 
   useEffect(() => {
     if (isEditMode) {
-      // In a real app, you would fetch the article data from an API
-      // This is just mock data for demonstration
-      if (id === '1') {
-        setFormData({
-          title: 'Getting Started with React',
-          thumbnail: 'https://placeholder.com/react-thumbnail.jpg',
-          description: 'A beginner-friendly guide to React development.',
-          link: 'https://example.com/react-guide'
-        });
-      } else if (id === '2') {
-        setFormData({
-          title: 'Tailwind CSS Tips and Tricks',
-          thumbnail: 'https://placeholder.com/tailwind-thumbnail.jpg',
-          description: 'Learn advanced techniques in Tailwind CSS.',
-          link: 'https://example.com/tailwind-tips'
-        });
-      } else if (id === '3') {
-        setFormData({
-          title: 'Building Responsive Layouts',
-          thumbnail: 'https://placeholder.com/layouts-thumbnail.jpg',
-          description: 'Create stunning responsive layouts for modern web applications.',
-          link: 'https://example.com/responsive-layouts'
-        });
-      }
+      fetchArticle();
     }
   }, [isEditMode, id]);
+
+  const fetchArticle = async () => {
+    try {
+      setFetchingData(true);
+      const docRef = doc(db, 'articles', id);
+      const docSnap = await getDoc(docRef);
+      
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setFormData({
+          title: data.title || '',
+          thumbnail: data.thumbnail || '',
+          description: data.description || '',
+          link: data.link || ''
+        });
+      } else {
+        alert('Article not found!');
+        navigate('/articles');
+      }
+      setFetchingData(false);
+    } catch (err) {
+      console.error('Error fetching article:', err);
+      alert('Failed to fetch article data');
+      setFetchingData(false);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -57,29 +65,59 @@ function AddEditArticle() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // In a real app, you would submit the form data to an API
-    console.log('Form submitted:', formData);
-    alert(`Article ${isEditMode ? 'updated' : 'added'} successfully!`);
-    navigate('/articles');
-  };
+    setLoading(true);
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      // In a real app, you would handle file uploads properly
-      // This is just a simple demonstration
-      setFormData(prev => ({
-        ...prev,
-        thumbnail: URL.createObjectURL(file)
-      }));
+    try {
+      if (isEditMode) {
+        // Update existing article
+        const docRef = doc(db, 'articles', id);
+        await updateDoc(docRef, {
+          ...formData,
+          updatedAt: serverTimestamp()
+        });
+        alert('Article updated successfully!');
+      } else {
+        // Add new article
+        await addDoc(collection(db, 'articles'), {
+          ...formData,
+          views: 0,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+        alert('Article added successfully!');
+      }
+      navigate('/articles');
+    } catch (err) {
+      console.error('Error saving article:', err);
+      alert('Failed to save article. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
+  if (fetchingData) {
+    return (
+      <div className="w-full flex h-screen bg-gray-50">
+        <div className="lg:hidden fixed top-4 left-4 z-20">
+          <button 
+            onClick={toggleMobileMenu}
+            className="p-2 rounded-md bg-primary text-white hover:bg-primary/90"
+          >
+            <Menu size={24} />
+          </button>
+        </div>
+        <Sidebar isMobileMenuOpen={isMobileMenuOpen} closeMobileMenu={() => setIsMobileMenuOpen(false)} />
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-gray-600">Loading article data...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full flex h-screen bg-gray-50">
-      {/* Mobile menu button */}
       <div className="lg:hidden fixed top-4 left-4 z-20">
         <button 
           onClick={toggleMobileMenu}
@@ -89,30 +127,28 @@ function AddEditArticle() {
         </button>
       </div>
 
-      {/* Sidebar */}
       <Sidebar isMobileMenuOpen={isMobileMenuOpen} closeMobileMenu={() => setIsMobileMenuOpen(false)} />
 
-      {/* Main content */}
       <div className="flex-1 overflow-auto p-8 lg:ml-30">
         <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-primary">
+          <h1 className="text-3xl font-bold text-primary">
             {isEditMode ? 'Edit Article' : 'Add New Article'}
-            </h1>
-            <Link 
+          </h1>
+          <Link 
             to="/articles" 
             className="bg-primary hover:bg-gray-400 text-white py-2 px-4 rounded-md transition-colors duration-300"
-            >
+          >
             Cancel
-            </Link>
+          </Link>
         </div>
 
         <div className="bg-white rounded-lg shadow-md p-6">
-            <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}>
             <div className="mb-6">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
                 Article Title
-                </label>
-                <input
+              </label>
+              <input
                 type="text"
                 id="title"
                 name="title"
@@ -120,41 +156,46 @@ function AddEditArticle() {
                 onChange={handleChange}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 required
-                />
+                placeholder="Enter article title"
+              />
             </div>
 
             <div className="mb-6">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="thumbnail">
-                Thumbnail Image
-                </label>
-                <input
-                type="file"
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="thumbnail">
+                Thumbnail Image URL
+              </label>
+              <input
+                type="url"
                 id="thumbnail"
                 name="thumbnail"
-                accept="image/*"
-                onChange={handleFileChange}
+                value={formData.thumbnail}
+                onChange={handleChange}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-                {formData.thumbnail && (
+                placeholder="https://example.com/image.jpg"
+                required
+              />
+              {formData.thumbnail && (
                 <div className="mt-2">
-                    <p className="text-sm text-gray-500">Current thumbnail:</p>
-                    <div className="mt-1 h-32 w-32 bg-gray-100 rounded-md overflow-hidden">
+                  <p className="text-sm text-gray-500">Preview:</p>
+                  <div className="mt-1 h-32 w-32 bg-gray-100 rounded-md overflow-hidden">
                     <img 
-                        src={formData.thumbnail} 
-                        alt="Thumbnail preview" 
-                        className="h-full w-full object-cover"
-                        onError={(e) => e.target.src = '/api/placeholder/100/100'}
+                      src={formData.thumbnail} 
+                      alt="Thumbnail preview" 
+                      className="h-full w-full object-cover"
+                      onError={(e) => {
+                        e.target.src = 'https://via.placeholder.com/100?text=Invalid+URL';
+                      }}
                     />
-                    </div>
+                  </div>
                 </div>
-                )}
+              )}
             </div>
 
             <div className="mb-6">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
                 Brief Description
-                </label>
-                <textarea
+              </label>
+              <textarea
                 id="description"
                 name="description"
                 value={formData.description}
@@ -162,14 +203,15 @@ function AddEditArticle() {
                 rows="4"
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 required
-                ></textarea>
+                placeholder="Enter a brief description of the article"
+              ></textarea>
             </div>
 
             <div className="mb-6">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="link">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="link">
                 Blog Link
-                </label>
-                <input
+              </label>
+              <input
                 type="url"
                 id="link"
                 name="link"
@@ -177,18 +219,20 @@ function AddEditArticle() {
                 onChange={handleChange}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 required
-                />
+                placeholder="https://yourblog.com/article"
+              />
             </div>
 
             <div className="flex justify-end">
-                <button
+              <button
                 type="submit"
-                className="bg-secondary hover:bg-blue-600 text-white py-2 px-6 rounded-md transition-colors duration-300"
-                >
-                {isEditMode ? 'Update Article' : 'Save Article'}
-                </button>
+                disabled={loading}
+                className="bg-secondary hover:bg-blue-600 text-white py-2 px-6 rounded-md transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'Saving...' : (isEditMode ? 'Update Article' : 'Save Article')}
+              </button>
             </div>
-            </form>
+          </form>
         </div>
       </div>
     </div>
@@ -196,4 +240,3 @@ function AddEditArticle() {
 }
 
 export default AddEditArticle;
-
