@@ -81,14 +81,21 @@ function AddEditArticle() {
       if (isEditMode) {
         const docRef = doc(db, 'articles', id);
         await updateDoc(docRef, {
-          ...formData,
+          title: formData.title,
+          thumbnail: formData.thumbnail,
+          description: formData.description,
+          content: formData.content,
           updatedAt: serverTimestamp()
         });
         alert('Article updated successfully!');
       } else {
         await addDoc(collection(db, 'articles'), {
-          ...formData,
+          title: formData.title,
+          thumbnail: formData.thumbnail,
+          description: formData.description,
+          content: formData.content,
           views: 0,
+          likes: 0,
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp()
         });

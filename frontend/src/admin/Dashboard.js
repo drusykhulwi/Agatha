@@ -47,11 +47,13 @@ const Dashboard = () => {
       const articlesSnapshot = await getDocs(articlesQuery);
       const allArticles = [];
       let articleViews = 0;
+      let articleLikes = 0;
       
       articlesSnapshot.forEach((doc) => {
         const data = { id: doc.id, ...doc.data() };
         allArticles.push(data);
         articleViews += data.views || 0;
+        articleLikes += data.likes || 0;
       });
 
       // Set stats
@@ -59,7 +61,7 @@ const Dashboard = () => {
         totalPodcasts: allPodcasts.length,
         totalArticles: allArticles.length,
         totalViews: podcastViews + articleViews,
-        totalLikes: 0 // You can implement likes later
+        totalLikes: articleLikes
       });
 
       // Set recent items (top 3)
@@ -278,6 +280,7 @@ const Dashboard = () => {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Views</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Likes</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
@@ -297,6 +300,7 @@ const Dashboard = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatDate(article.createdAt)}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{(article.views || 0).toLocaleString()}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{(article.likes || 0).toLocaleString()}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <button 
                             onClick={() => navigate(`/edit-article/${article.id}`)}
