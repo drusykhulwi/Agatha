@@ -15,11 +15,13 @@ function AddEditArticle() {
     title: '',
     thumbnail: '',
     description: '',
-    link: ''
+    content: ''
   });
   
   const [loading, setLoading] = useState(false);
   const [fetchingData, setFetchingData] = useState(false);
+  const [descriptionLength, setDescriptionLength] = useState(0);
+  const MAX_DESCRIPTION_LENGTH = 200;
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -43,8 +45,9 @@ function AddEditArticle() {
           title: data.title || '',
           thumbnail: data.thumbnail || '',
           description: data.description || '',
-          link: data.link || ''
+          content: data.content || ''
         });
+        setDescriptionLength(data.description?.length || 0);
       } else {
         alert('Article not found!');
         navigate('/articles');
@@ -59,10 +62,15 @@ function AddEditArticle() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    
+    if (name === 'description') {
+      if (value.length <= MAX_DESCRIPTION_LENGTH) {
+        setFormData(prev => ({ ...prev, [name]: value }));
+        setDescriptionLength(value.length);
+      }
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -71,7 +79,6 @@ function AddEditArticle() {
 
     try {
       if (isEditMode) {
-        // Update existing article
         const docRef = doc(db, 'articles', id);
         await updateDoc(docRef, {
           ...formData,
@@ -79,7 +86,6 @@ function AddEditArticle() {
         });
         alert('Article updated successfully!');
       } else {
-        // Add new article
         await addDoc(collection(db, 'articles'), {
           ...formData,
           views: 0,
@@ -146,7 +152,7 @@ function AddEditArticle() {
           <form onSubmit={handleSubmit}>
             <div className="mb-6">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
-                Article Title
+                Article Title *
               </label>
               <input
                 type="text"
@@ -162,7 +168,7 @@ function AddEditArticle() {
 
             <div className="mb-6">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="thumbnail">
-                Thumbnail Image URL
+                Thumbnail Image URL *
               </label>
               <input
                 type="url"
@@ -193,34 +199,45 @@ function AddEditArticle() {
 
             <div className="mb-6">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
-                Brief Description
+                Brief Description * (Max {MAX_DESCRIPTION_LENGTH} characters)
               </label>
               <textarea
                 id="description"
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
-                rows="4"
+                rows="3"
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 required
-                placeholder="Enter a brief description of the article"
+                placeholder="Enter a brief description that will appear on the blog listing page"
               ></textarea>
+              <div className="flex justify-between mt-1">
+                <p className="text-xs text-gray-500">
+                  This description will appear on the blog listing page
+                </p>
+                <p className={`text-xs ${descriptionLength >= MAX_DESCRIPTION_LENGTH ? 'text-red-500' : 'text-gray-500'}`}>
+                  {descriptionLength}/{MAX_DESCRIPTION_LENGTH}
+                </p>
+              </div>
             </div>
 
             <div className="mb-6">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="link">
-                Blog Link
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="content">
+                Full Article Content *
               </label>
-              <input
-                type="url"
-                id="link"
-                name="link"
-                value={formData.link}
+              <textarea
+                id="content"
+                name="content"
+                value={formData.content}
                 onChange={handleChange}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                rows="15"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline font-mono text-sm"
                 required
-                placeholder="https://yourblog.com/article"
-              />
+                placeholder="Write your full article content here. You can use line breaks for paragraphs."
+              ></textarea>
+              <p className="text-xs text-gray-500 mt-1">
+                Tip: Use double line breaks to create paragraphs. The content will be formatted when displayed.
+              </p>
             </div>
 
             <div className="flex justify-end">

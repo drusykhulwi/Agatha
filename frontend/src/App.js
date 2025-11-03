@@ -12,6 +12,7 @@ import PodcastList from './admin/PodcastList';
 import AddPodcast from './admin/AddPodcast';
 import Login from './pages/Login';
 import ProtectedRoute from './components/ProtectedRoute';
+import ArticleView from './pages/ArticleView';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/blogs" element={<Blogs />} />
+        <Route path="/article/:id" element={<ArticleView />} />
         <Route path="/podcasts" element={<Podcasts />} />
         <Route path="/podcast-audio/:id" element={<PodcastAudioPage />} />
         <Route path="/podcast-video/:id" element={<PodcastVideoPage />} />

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
+import { Link } from 'react-router-dom';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../firebase/Config';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
@@ -42,10 +43,10 @@ const Blog = () => {
     setDisplayCount(prev => prev + 3);
   };
 
-  const getReadingTime = (description) => {
-    // Estimate reading time based on description length
+  const getReadingTime = (content) => {
+    if (!content) return '1 min read';
     const wordsPerMinute = 200;
-    const words = description.split(' ').length;
+    const words = content.split(/\s+/).length;
     const minutes = Math.ceil(words / wordsPerMinute);
     return `${minutes} min read`;
   };
@@ -73,7 +74,7 @@ const Blog = () => {
       <main className="flex-grow container mx-auto px-4 py-8">
         {/* Featured Blog */}
         {featuredArticle && (
-          <div className="relative w-full h-80 md:h-96 mb-8">
+          <div className="relative w-full h-80 md:h-96 mb-8 rounded-lg overflow-hidden">
             <img 
               src={featuredArticle.thumbnail || 'https://images.pexels.com/photos/129112/pexels-photo-129112.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'} 
               alt={featuredArticle.title} 
@@ -82,15 +83,13 @@ const Blog = () => {
             />
             <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent text-white">
               <h2 className="text-xl md:text-2xl font-medium">{featuredArticle.title}</h2>
-              <p className="text-sm opacity-80">{getReadingTime(featuredArticle.description)}</p>
-              <a 
-                href={featuredArticle.link} 
-                target="_blank" 
-                rel="noopener noreferrer"
+              <p className="text-sm opacity-80">{getReadingTime(featuredArticle.content)}</p>
+              <Link 
+                to={`/article/${featuredArticle.id}`}
                 className="mt-2 inline-block bg-primary text-white px-4 py-1 rounded-sm text-sm hover:bg-primary/90 transition-colors"
               >
                 Read More
-              </a>
+              </Link>
             </div>
           </div>
         )}
@@ -99,7 +98,7 @@ const Blog = () => {
         <p className="text-gray-700 text-center mb-8">Here are some of the articles I've written</p>
         
         {/* Blog Grid */}
-        {articles.length === 0 ? (
+        {articles.length === 0 && !featuredArticle ? (
           <div className="text-center py-12">
             <p className="text-gray-500">No articles available yet.</p>
           </div>
@@ -107,27 +106,28 @@ const Blog = () => {
           <>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
               {articles.slice(0, displayCount).map((article) => (
-                <div key={article.id} className="flex flex-col">
+                <div key={article.id} className="flex flex-col bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                   <img 
                     src={article.thumbnail || 'https://images.pexels.com/photos/7583367/pexels-photo-7583367.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'} 
                     alt={article.title} 
-                    className="w-full h-48 object-cover mb-4"
+                    className="w-full h-48 object-cover"
                     onError={(e) => e.target.src = 'https://images.pexels.com/photos/7583367/pexels-photo-7583367.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'}
                   />
-                  <h3 className="text-gray-400 mb-2">{article.title}</h3>
-                  <p className="text-gray-700 text-sm mb-4">
-                    {article.description.length > 150 
-                      ? `${article.description.substring(0, 150)}...` 
-                      : article.description}
-                  </p>
-                  <a 
-                    href={article.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-auto bg-primary text-white px-4 py-1 rounded-sm self-start text-sm hover:bg-primary/90 transition-colors"
-                  >
-                    Read More
-                  </a>
+                  <div className="p-4 flex flex-col flex-grow">
+                    <h3 className="text-gray-800 font-semibold mb-2">{article.title}</h3>
+                    <p className="text-gray-600 text-sm mb-4 flex-grow">
+                      {article.description}
+                    </p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-gray-500">{getReadingTime(article.content)}</span>
+                      <Link 
+                        to={`/article/${article.id}`}
+                        className="bg-primary text-white px-4 py-1 rounded-sm text-sm hover:bg-primary/90 transition-colors"
+                      >
+                        Read More
+                      </Link>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
